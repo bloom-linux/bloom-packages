@@ -26,14 +26,13 @@ jobs:
       - name: Build all packages
         run: |
           mkdir -p /repo
+          SRCDIR="$(pwd)"
           for pkg in bloom-settings bloom-shell bloom-installer bloom-desktop; do
             echo "==> Building $pkg"
-            cp -r $pkg /tmp/$pkg
+            cp -r "$SRCDIR/$pkg" /tmp/$pkg
             chown -R builder /tmp/$pkg
-            cd /tmp/$pkg
-            sudo -u builder makepkg -sf --noconfirm --skippgpcheck
-            mv *.pkg.tar.zst /repo/ 2>/dev/null || true
-            cd /
+            sudo -u builder bash -c "cd /tmp/$pkg && makepkg -sf --noconfirm --skippgpcheck"
+            mv /tmp/$pkg/*.pkg.tar.zst /repo/ 2>/dev/null || true
           done
 
       - name: Create pacman database
