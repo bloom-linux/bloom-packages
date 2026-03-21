@@ -1,0 +1,51 @@
+name: Build and publish pacman repo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          pacman -Sy --noconfirm base-devel git sudo
+
+      - name: Create build user
+        run: |
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+      - name: Build all packages
+        run: |
+          mkdir -p /repo
+          for pkg in bloom-settings bloom-shell bloom-installer bloom-desktop; do
+            echo "==> Building $pkg"
+            cp -r $pkg /tmp/$pkg
+            chown -R builder /tmp/$pkg
+            cd /tmp/$pkg
+            sudo -u builder makepkg -sf --noconfirm --skippgpcheck
+            mv *.pkg.tar.zst /repo/ 2>/dev/null || true
+            cd /
+          done
+
+      - name: Create pacman database
+        run: |
+          cd /repo
+          repo-add bloom.db.tar.gz *.pkg.tar.zst
+          ls -lh
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /repo
+          publish_branch: gh-pages
+          force_orphan: false

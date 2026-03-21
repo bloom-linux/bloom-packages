@@ -1,0 +1,28 @@
+# Maintainer: Bloom Linux <https://github.com/bloom-linux>
+pkgname=bloom-shell
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Bloom Linux desktop shell — dynamic island, EWW topbar, and theme tools'
+arch=('any')
+url='https://github.com/bloom-linux/bloom-shell'
+license=('MIT')
+depends=('eww' 'hyprland' 'playerctl' 'jq' 'imagemagick' 'swaync' 'python' 'python-gobject')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    printf "1.0.%s" "$(git rev-list --count HEAD)"
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    install -dm755 "$pkgdir/usr/local/bin"
+    install -m755 bloom-island bloom-generate-colors bloom-generate-cursors \
+        bloom-generate-icons bloom-get-icon "$pkgdir/usr/local/bin/"
+
+    install -dm755 "$pkgdir/etc/xdg/eww/scripts"
+    install -m644 eww/eww.yuck eww/eww.scss "$pkgdir/etc/xdg/eww/"
+    install -m755 eww/scripts/*.sh "$pkgdir/etc/xdg/eww/scripts/"
+}

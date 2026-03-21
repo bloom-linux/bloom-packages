@@ -1,0 +1,28 @@
+# Maintainer: Bloom Linux <https://github.com/bloom-linux>
+pkgname=bloom-installer
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Bloom Linux installation and first-run experience'
+arch=('any')
+url='https://github.com/bloom-linux/bloom-installer'
+license=('MIT')
+depends=('python' 'python-gobject' 'gtk4' 'archinstall')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    printf "1.0.%s" "$(git rev-list --count HEAD)"
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    install -dm755 "$pkgdir/usr/local/bin"
+    install -m755 bloom-install bloom-welcome bloom-firstrun "$pkgdir/usr/local/bin/"
+
+    if [[ -d share-bloom ]]; then
+        install -dm755 "$pkgdir/usr/share/bloom"
+        cp -r share-bloom/* "$pkgdir/usr/share/bloom/"
+    fi
+}

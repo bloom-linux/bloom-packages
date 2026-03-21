@@ -1,0 +1,19 @@
+# Maintainer: Bloom Linux <https://github.com/bloom-linux>
+pkgname=bloom-desktop
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Bloom Linux desktop environment (meta-package)'
+arch=('any')
+url='https://github.com/bloom-linux/bloom-desktop'
+license=('MIT')
+depends=(
+    'bloom-settings'
+    'bloom-shell'
+    'bloom-installer'
+)
+source=()
+sha256sums=()
+
+package() {
+    true
+}

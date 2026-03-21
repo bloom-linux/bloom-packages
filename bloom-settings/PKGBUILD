@@ -1,0 +1,33 @@
+# Maintainer: Bloom Linux <https://github.com/bloom-linux>
+pkgname=bloom-settings
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Bloom Linux settings panel and system control popups'
+arch=('any')
+url='https://github.com/bloom-linux/bloom-settings'
+license=('MIT')
+depends=('python' 'python-gobject' 'gtk4' 'networkmanager' 'brightnessctl' 'pipewire' 'libpulse')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    printf "1.0.%s" "$(git rev-list --count HEAD)"
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    install -dm755 "$pkgdir/usr/local/bin"
+    install -m755 bloom-settings bloom-volume bloom-brightness bloom-network bloom-power bloom-calendar \
+        "$pkgdir/usr/local/bin/"
+
+    install -dm755 "$pkgdir/usr/local/lib/bloom-settings"
+    install -m644 lib/bloom-settings/*.py "$pkgdir/usr/local/lib/bloom-settings/"
+
+    install -dm755 "$pkgdir/usr/share/applications"
+    install -m644 *.desktop "$pkgdir/usr/share/applications/"
+
+    install -dm755 "$pkgdir/usr/share/pixmaps"
+    install -m644 bloom*.svg bloom*.png "$pkgdir/usr/share/pixmaps/" 2>/dev/null || true
+}
