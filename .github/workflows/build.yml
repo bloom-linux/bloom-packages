@@ -43,6 +43,8 @@ jobs:
             chown -R builder /tmp/$pkg
             sudo -u builder bash -c "cd /tmp/$pkg && makepkg -sf --noconfirm --skippgpcheck"
             mv /tmp/$pkg/*.pkg.tar.zst /repo/ 2>/dev/null || true
+            # Install built package so subsequent packages can depend on it
+            pacman -U --noconfirm /repo/$pkg-*.pkg.tar.zst 2>/dev/null || true
           done
 
       - name: Create pacman database
