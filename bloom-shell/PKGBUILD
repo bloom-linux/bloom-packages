@@ -6,7 +6,7 @@ pkgdesc='Bloom Linux desktop shell — dynamic island, EWW topbar, and theme too
 arch=('any')
 url='https://github.com/bloom-linux/bloom-shell'
 license=('MIT')
-depends=('eww' 'hyprland' 'playerctl' 'jq' 'imagemagick' 'swaync' 'python' 'python-gobject')
+depends=('eww' 'hyprland' 'playerctl' 'jq' 'imagemagick' 'swaync' 'python' 'python-gobject' 'cage')
 source=("$pkgname::git+$url.git")
 sha256sums=('SKIP')
 
@@ -20,7 +20,7 @@ package() {
 
     install -dm755 "$pkgdir/usr/local/bin"
     install -m755 bloom-island bloom-generate-colors bloom-generate-cursors \
-        bloom-generate-icons bloom-get-icon "$pkgdir/usr/local/bin/"
+        bloom-generate-icons bloom-get-icon bloom-greeter "$pkgdir/usr/local/bin/"
 
     install -dm755 "$pkgdir/etc/xdg/eww/scripts"
     install -m644 eww/eww.yuck eww/eww.scss "$pkgdir/etc/xdg/eww/"
