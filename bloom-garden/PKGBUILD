@@ -1,0 +1,39 @@
+# Maintainer: Bloom Linux <https://github.com/bloom-linux>
+pkgname=bloom-garden
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Graphical frontend for Petal — GNOME Software-style UX for the distro-agnostic package manager'
+arch=('any')
+url='https://github.com/bloom-linux/bloom-garden'
+license=('MIT')
+depends=(
+    'python'
+    'python-gobject'
+    'gtk4'
+    'appstream'
+    'appstream-glib'
+    'polkit'
+)
+optdepends=(
+    'petal: package manager backend that bloom-garden drives — install via the upstream install.sh'
+)
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    printf "1.0.%s" "$(git rev-list --count HEAD)"
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    install -dm755 "$pkgdir/usr/local/bin"
+    install -m755 bloom-garden "$pkgdir/usr/local/bin/"
+
+    install -dm755 "$pkgdir/usr/local/lib/bloom-garden"
+    install -m644 lib/bloom-garden/*.py "$pkgdir/usr/local/lib/bloom-garden/"
+
+    install -dm755 "$pkgdir/usr/share/applications"
+    install -m644 bloom-garden.desktop "$pkgdir/usr/share/applications/"
+}
