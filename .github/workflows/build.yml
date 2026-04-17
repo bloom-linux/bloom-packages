@@ -1,9 +1,21 @@
 name: Build and publish pacman repo
 
 on:
+  # Rebuild on any change to the PKGBUILDs themselves.
   push:
     branches: [main]
+  # Manual trigger from the Actions tab.
   workflow_dispatch:
+  # External trigger so bloom-settings / bloom-shell / bloom-installer /
+  # bloom-garden can kick a rebuild after they push. Use `gh api` from any
+  # authorised token:
+  #   gh api repos/bloom-linux/bloom-packages/dispatches -f event_type=rebuild
+  repository_dispatch:
+    types: [rebuild]
+  # Safety net — rebuilds daily at 03:00 UTC so bloom-* pushes are picked
+  # up within 24h even if nobody dispatches manually.
+  schedule:
+    - cron: '0 3 * * *'
 
 permissions:
   contents: write
